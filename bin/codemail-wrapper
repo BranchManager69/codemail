@@ -1,0 +1,5 @@
+#!/bin/bash
+set -a
+source /home/branchmanager/tools/codemail/.env
+set +a
+exec /home/branchmanager/tools/codemail/.venv/bin/codemail-runner
