@@ -35,6 +35,12 @@ CODEX_BIN = os.environ.get("CODEMAIL_CODEX_BIN", "codex")
 
 ENV_HOME = Path(os.environ.get("CODEMAIL_HOME", HOME)).expanduser()
 
+ALLOWED_SENDERS = [
+    entry.strip().lower()
+    for entry in os.environ.get("CODEMAIL_ALLOWED_SENDERS", "").split(",")
+    if entry.strip()
+]
+
 
 def ensure_parent(path: Path) -> None:
     """Create parent directory for *path* if it doesn't already exist."""

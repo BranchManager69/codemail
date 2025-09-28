@@ -53,6 +53,15 @@ def main() -> int:
         log(f"Skipping self-triggered message {message_id}")
         return 0
 
+    if config.ALLOWED_SENDERS and normalized_sender not in config.ALLOWED_SENDERS:
+        log(
+            "Skipping message {mid} from unauthorized sender {sender}".format(
+                mid=message_id,
+                sender=normalized_sender or sender_display,
+            )
+        )
+        return 0
+
     references = extract_referenced_ids(msg.get("References"))
     in_reply_to = normalize_msg_id(msg.get("In-Reply-To"))
 
