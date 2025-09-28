@@ -123,6 +123,61 @@ email → Postfix alias/.forward → codemail-wrapper → codemail-runner → Co
 
 All variables can be set in the `.env` file or exported before the wrapper executes.
 
+## Mail Security Hardening
+Codemail assumes you already run a responsible MTA. To keep task traffic from being spoofed (or
+flagged as spam) you should wire in the following before inviting other operators to email your
+automation inbox.
+
+### 1. SPF
+- Publish an SPF TXT record for the domain you use in `CODEMAIL_MAIL_USER`.
+- Example (Cloudflare → DNS): `v=spf1 mx include:_spf.google.com -all` – swap in the MTAs that
+  are actually allowed to send on your behalf.
+
+### 2. DKIM
+1. Install and enable OpenDKIM (or your platform’s equivalent) and generate a key pair:
+   ```bash
+   sudo opendkim-genkey -D /etc/opendkim/keys/yourdomain -d yourdomain -s mail
+   sudo chown opendkim:opendkim /etc/opendkim/keys/yourdomain/mail.private
+   ```
+2. Add a DNS TXT record named `mail._domainkey.yourdomain` whose value is the contents of
+   `mail.txt` produced by the command above.
+3. Wire the key into Postfix by adding to `/etc/opendkim/KeyTable` and `/etc/opendkim/SigningTable`,
+   then set in `/etc/opendkim.conf`:
+   ```text
+   Domain                  yourdomain
+   KeyFile                 /etc/opendkim/keys/yourdomain/mail.private
+   Selector                mail
+   Socket                  local:/var/spool/postfix/opendkim/opendkim.sock
+   ```
+4. Restart OpenDKIM and Postfix, then verify DNS propagation:
+   ```bash
+   sudo systemctl restart opendkim postfix
+   sudo opendkim-testkey -d yourdomain -s mail -k /etc/opendkim/keys/yourdomain/mail.private
+   ```
+
+### 3. DMARC
+1. Publish a DMARC TXT record (again via DNS) such as:
+   ```text
+   _dmarc.yourdomain  IN  TXT  "v=DMARC1; p=quarantine; rua=mailto:dmarc@yourdomain; ruf=mailto:dmarc@yourdomain"
+   ```
+   Start with `p=none` if you want reports before enforcing policy.
+2. Install and enable OpenDMARC (optional but recommended). Postfix main.cf should include:
+   ```text
+   smtpd_milters = inet:localhost:8893, inet:localhost:8891
+   non_smtpd_milters = inet:localhost:8893, inet:localhost:8891
+   ```
+   (with 8893 as OpenDMARC and 8891 as OpenDKIM, adjust to match your install).
+3. Watch the reports sent to the `rua` address—you can move to `p=reject` once you are satisfied
+   that only authorized hosts are sending mail.
+
+### 4. Allowed Sender List (Codemail)
+- Use `CODEMAIL_ALLOWED_SENDERS` to whitelist trusted operators (example:
+  `branch@branch.bet,nrsander@gmail.com`). Codemail politely rejects everyone else so you are aware
+  of attempted usage.
+
+> Tip: if you deploy Codemail on a fresh host, put the DKIM key, DMARC TXT, and allowed sender list
+> into infrastructure-as-code or scripts so future reinstalls stay consistent.
+
 ## Development
 ```bash
 source .venv/bin/activate
