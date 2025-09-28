@@ -50,7 +50,9 @@ def extract_body(msg: EmailMessage) -> str:
         except Exception:  # pragma: no cover - protective fallback
             payload = body_part.get_payload(decode=True)
             if payload:
-                text = payload.decode(body_part.get_content_charset("utf-8"), errors="replace")
+                text = payload.decode(
+                    body_part.get_content_charset("utf-8"), errors="replace"
+                )
 
     if body_part is not None and body_part.get_content_type() == "text/html":
         text = html.unescape(text)
@@ -62,6 +64,8 @@ def extract_body(msg: EmailMessage) -> str:
 
 
 def resolve_recipients(msg: EmailMessage) -> List[str]:
-    reply_headers: Iterable[str] = msg.get_all("Reply-To", []) or msg.get_all("From", [])
+    reply_headers: Iterable[str] = msg.get_all("Reply-To", []) or msg.get_all(
+        "From", []
+    )
     addresses = [addr for _, addr in getaddresses(reply_headers) if addr]
     return addresses or [config.DEFAULT_FALLBACK_RECIPIENT]

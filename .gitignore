@@ -4,6 +4,7 @@ __pycache__/
 .venv/
 .env
 .env.*
+!.env.example
 .python-version
 pytest.ini
 .pytest_cache/

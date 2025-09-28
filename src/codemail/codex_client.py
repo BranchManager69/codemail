@@ -40,7 +40,9 @@ def _capture_latest_session(before: Set[str]) -> Optional[str]:
     return None
 
 
-def run_codex(prompt: str, resume_session: Optional[str]) -> Tuple[int, Optional[str], List[str]]:
+def run_codex(
+    prompt: str, resume_session: Optional[str]
+) -> Tuple[int, Optional[str], List[str]]:
     base_cmd = [config.CODEX_BIN, "exec", "--skip-git-repo-check", "--json"]
     if resume_session:
         cmd = base_cmd + ["resume", resume_session, "-"]
@@ -69,7 +71,11 @@ def run_codex(prompt: str, resume_session: Optional[str]) -> Tuple[int, Optional
             timeout=CODEX_TIMEOUT,
         )
     except subprocess.TimeoutExpired as exc:
-        return 124, resume_session, [f"Codex execution timed out after {exc.timeout} seconds."]
+        return (
+            124,
+            resume_session,
+            [f"Codex execution timed out after {exc.timeout} seconds."],
+        )
 
     stdout = proc.stdout.decode("utf-8", errors="replace")
     stderr = proc.stderr.decode("utf-8", errors="replace")

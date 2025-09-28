@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import sys
 from email.utils import getaddresses
-from typing import List
 
 from . import config
 from .codex_client import run_codex
@@ -22,7 +21,6 @@ from .prompt import build_prompt
 from .state import load_state, save_state
 
 
-
 def main() -> int:
     raw = sys.stdin.buffer.read()
     if not raw:
@@ -31,7 +29,10 @@ def main() -> int:
 
     msg = parse_bytes(raw)
 
-    message_id = normalize_msg_id(msg.get("Message-ID")) or f"generated-{int(configure_time_ms())}"
+    message_id = (
+        normalize_msg_id(msg.get("Message-ID"))
+        or f"generated-{int(configure_time_ms())}"
+    )
     from_addresses = msg.get_all("From", [])
 
     addresses = getaddresses(from_addresses)
@@ -78,7 +79,9 @@ def main() -> int:
 
     assignments[message_id] = session_id
 
-    status_line = "Codex task completed." if rc == 0 else f"Codex exited with status {rc}."
+    status_line = (
+        "Codex task completed." if rc == 0 else f"Codex exited with status {rc}."
+    )
     response_text = status_line + "\n\n" + "\n\n".join(responses)
 
     if in_reply_to and in_reply_to not in references:
@@ -90,7 +93,9 @@ def main() -> int:
     try:
         response_mid = send_email(
             to_addrs=to_addrs,
-            subject=f"Re: {subject}" if not subject.lower().startswith("re:") else subject,
+            subject=f"Re: {subject}"
+            if not subject.lower().startswith("re:")
+            else subject,
             body=response_text,
             session_id=session_id,
             in_reply_to=message_id,

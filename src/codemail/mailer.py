@@ -38,7 +38,9 @@ def send_email(
         msg["Reply-To"] = config.REPLY_TO
 
     if in_reply_to:
-        msg["In-Reply-To"] = in_reply_to if in_reply_to.startswith("<") else f"<{in_reply_to}>"
+        msg["In-Reply-To"] = (
+            in_reply_to if in_reply_to.startswith("<") else f"<{in_reply_to}>"
+        )
 
     if references:
         dedup: List[str] = []
