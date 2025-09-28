@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "codemail"
-version = "0.1.0"
+version = "0.1.1"
 description = "Email-ingest automation for Codex tasks"
 readme = "README.md"
 requires-python = ">=3.10"
