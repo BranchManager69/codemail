@@ -60,6 +60,30 @@ def main() -> int:
                 sender=normalized_sender or sender_display,
             )
         )
+        notice_recipient = sender_email or config.DEFAULT_FALLBACK_RECIPIENT
+        notice_subject = (
+            f"Re: {subject}"
+            if subject and not subject.lower().startswith("re:")
+            else subject or "Codemail request"
+        )
+        notice_body = (
+            "Codex task rejected.\n\n"
+            "**Why**\n"
+            "- Your address is not authorised to trigger Codemail.\n\n"
+            "**What to do**\n"
+            "- Contact the operator to be added to the allow-list."
+        )
+        try:
+            send_email(
+                to_addrs=[notice_recipient],
+                subject=notice_subject,
+                body=notice_body,
+                session_id="unauthorised",
+                in_reply_to=message_id,
+                references=[message_id],
+            )
+        except Exception as exc:  # pragma: no cover - only on mail failures
+            log(f"Failed to notify unauthorised sender: {exc}")
         return 0
 
     references = extract_referenced_ids(msg.get("References"))

@@ -119,7 +119,7 @@ email → Postfix alias/.forward → codemail-wrapper → codemail-runner → Co
 | `CODEMAIL_REPLY_TO` | `tasks@branch.bet` | Reply-To header used on summaries |
 | `CODEMAIL_FALLBACK_RECIPIENT` | `branch@branch.bet` | Where to send reports if no recipient headers are found |
 | `CODEMAIL_CODEX_BIN` | `codex` | Override Codex CLI binary name/path |
-| `CODEMAIL_ALLOWED_SENDERS` | *(unset)* | Comma-separated list of email addresses allowed to trigger tasks; when unset, Codemail accepts any sender |
+| `CODEMAIL_ALLOWED_SENDERS` | *(unset)* | Comma-separated list of email addresses allowed to trigger tasks; when set, Codemail rejects other senders and emails them a notice |
 
 All variables can be set in the `.env` file or exported before the wrapper executes.
 
