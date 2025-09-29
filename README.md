@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/codemail-wordmark.svg" alt="Codemail wordmark" width="480">
+</p>
+
 <div align="center">
 
 # Codemail

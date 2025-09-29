@@ -1,0 +1,19 @@
+<svg width="480" height="120" viewBox="0 0 480 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6c5ce7" />
+      <stop offset="50%" stop-color="#4b9cff" />
+      <stop offset="100%" stop-color="#20e3b2" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <rect x="20" y="28" width="440" height="64" rx="18" ry="18" fill="rgba(24, 26, 39, 0.75)" />
+  <text x="240" y="72" text-anchor="middle" font-family="'Russo One', 'Orbitron', 'Segoe UI', sans-serif" font-size="52" fill="url(#grad)" filter="url(#glow)">CODEMAIL</text>
+  <text x="240" y="100" text-anchor="middle" font-family="'Space Grotesk', 'Segoe UI', sans-serif" font-size="16" fill="#cfd9ff" opacity="0.85">Agent-triggered email automation for Codex</text>
+</svg>
